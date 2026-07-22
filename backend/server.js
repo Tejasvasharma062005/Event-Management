@@ -22,6 +22,14 @@ const io = new Server(server, {
   }
 });
 
+// Middleware to normalize URL paths for Vercel serverless routing
+app.use((req, res, next) => {
+  if (!req.url.startsWith('/api') && !req.url.startsWith('/socket.io')) {
+    req.url = '/api' + req.url;
+  }
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
 
