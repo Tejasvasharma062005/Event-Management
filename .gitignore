@@ -34,3 +34,5 @@ lerna-debug.log*
 .DS_Store
 Thumbs.db
 test_video.mp4
+
+.vercel
