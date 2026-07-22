@@ -1503,6 +1503,10 @@ app.put('/api/recommendations/quotations/:id', authenticateToken, async (req, re
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Event Management Backend & Socket Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`Event Management Backend & Socket Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
