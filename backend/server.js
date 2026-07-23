@@ -736,13 +736,13 @@ app.get('/api/stats', async (req, res) => {
     const clientCount = await db.get("SELECT COUNT(*) AS count FROM users WHERE role = 'user'");
     
     // Average rating dynamically calculated from reviews table
-    const ratingRow = await db.get('SELECT AVG(rating) AS avgRating FROM reviews');
+    const ratingRow = await db.get('SELECT AVG(rating) AS "avgRating" FROM reviews');
     let avgRating = 5.0;
     if (ratingRow && ratingRow.avgRating !== null) {
       avgRating = parseFloat(ratingRow.avgRating.toFixed(1));
     } else {
       // Fallback: average of baseline ratings in providers table
-      const fallbackRow = await db.get('SELECT AVG(rating) AS avgRating FROM providers');
+      const fallbackRow = await db.get('SELECT AVG(rating) AS "avgRating" FROM providers');
       if (fallbackRow && fallbackRow.avgRating !== null) {
         avgRating = parseFloat(fallbackRow.avgRating.toFixed(1));
       }
