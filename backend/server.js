@@ -506,8 +506,8 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
 
   try {
     const result = await db.run(
-      'INSERT INTO bookings (user_id, provider_id, event_date, status, total_price, quotation_id) VALUES (?, ?, ?, "pending", ?, ?)',
-      [req.user.id, providerId, eventDate, parseFloat(totalPrice), quotationId || null]
+      'INSERT INTO bookings (user_id, provider_id, event_date, status, total_price, quotation_id) VALUES (?, ?, ?, ?, ?, ?)',
+      [req.user.id, providerId, eventDate, 'pending', parseFloat(totalPrice), quotationId || null]
     );
 
     const newBooking = await db.get('SELECT * FROM bookings WHERE id = ?', [result.id]);
@@ -732,8 +732,8 @@ app.post('/api/bookings/:id/cash-paid', authenticateToken, async (req, res) => {
 app.get('/api/stats', async (req, res) => {
   try {
     const providerCount = await db.get('SELECT COUNT(*) AS count FROM providers');
-    const bookingCount = await db.get('SELECT COUNT(*) AS count FROM bookings WHERE status = "completed"');
-    const clientCount = await db.get('SELECT COUNT(*) AS count FROM users WHERE role = "user"');
+    const bookingCount = await db.get("SELECT COUNT(*) AS count FROM bookings WHERE status = 'completed'");
+    const clientCount = await db.get("SELECT COUNT(*) AS count FROM users WHERE role = 'user'");
     
     // Average rating dynamically calculated from reviews table
     const ratingRow = await db.get('SELECT AVG(rating) AS avgRating FROM reviews');
@@ -1105,8 +1105,8 @@ app.post('/api/tickets', authenticateToken, async (req, res) => {
 
   try {
     const result = await db.run(
-      'INSERT INTO support_tickets (user_id, subject, message, status) VALUES (?, ?, ?, "open")',
-      [req.user.id, subject, message]
+      'INSERT INTO support_tickets (user_id, subject, message, status) VALUES (?, ?, ?, ?)',
+      [req.user.id, subject, message, 'open']
     );
     const ticket = await db.get('SELECT * FROM support_tickets WHERE id = ?', [result.id]);
     res.status(201).json({ message: 'Support ticket submitted successfully', ticket });
@@ -1290,7 +1290,7 @@ app.put('/api/admin/settings', authenticateToken, verifyAdmin, async (req, res) 
   if (!platformFee) return res.status(400).json({ message: 'Platform fee value required' });
 
   try {
-    await db.run("INSERT OR REPLACE INTO platform_settings (key, value) VALUES ('platform_fee', ?)", [platformFee]);
+    await db.run("INSERT INTO platform_settings (key, value) VALUES ('platform_fee', ?) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value", [platformFee]);
     res.json({ message: 'Platform settings updated successfully' });
   } catch (err) {
     console.error('Admin update settings error:', err);
