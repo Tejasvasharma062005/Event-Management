@@ -1,4 +1,4 @@
-const API_BASE = (import.meta.env.VITE_API_URL !== undefined ? import.meta.env.VITE_API_URL : 'http://localhost:5000') + '/api';
+const API_BASE = import.meta.env.PROD ? '/api' : 'http://localhost:5000/api';
 
 // Helper to handle response and errors
 const handleResponse = async (res) => {
